@@ -40,7 +40,7 @@ export function renderArticles(articles) {
         // Build inner HTML (Using template literals is efficient here since we have full control over the inputs, 
         // though in production we should sanitize HTML to prevent XSS if the API isn't fully trusted)
         card.innerHTML = `
-            <img class="news-card-img" src="${imageUrl}" alt="${article.title}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_PLACEHOLDER}';">
+            <img class="news-card-img" alt="${article.title}" loading="lazy">
             <div class="news-card-content">
                 <h2 class="news-card-title">
                     <a href="${article.url}" target="_blank" rel="noopener noreferrer">
@@ -54,6 +54,24 @@ export function renderArticles(articles) {
                 </div>
             </div>
         `;
+
+        const img = card.querySelector('.news-card-img');
+        
+        // Set up robust error listener to bypass hotlinking restrictions (CORS/406) via the proxy
+        img.addEventListener('error', function handleErr() {
+            img.removeEventListener('error', handleErr);
+            if (article.urlToImage && !article.urlToImage.startsWith('data:') && !img.src.startsWith('https://corsproxy.io/?')) {
+                img.src = `https://corsproxy.io/?${encodeURIComponent(article.urlToImage)}`;
+                img.addEventListener('error', () => {
+                    img.src = DEFAULT_PLACEHOLDER;
+                }, { once: true });
+            } else {
+                img.src = DEFAULT_PLACEHOLDER;
+            }
+        });
+
+        // Set the src after binding the error listener to guarantee the event is caught
+        img.src = imageUrl;
 
         fragment.appendChild(card);
     });
