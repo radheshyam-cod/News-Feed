@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live News Feed</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1>News<span>Feed</span></h1>
+            <div class="controls">
+                <input type="text" id="searchInput" placeholder="Search news..." aria-label="Search news">
+                <select id="categorySelect" aria-label="Select news category">
+                    <option value="general">General</option>
+                    <option value="business">Business</option>
+                    <option value="technology">Technology</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="health">Health</option>
+                    <option value="science">Science</option>
+                    <option value="sports">Sports</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <!-- Error & Info Container -->
+        <div id="messageContainer" class="message-container hidden" role="alert"></div>
+
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="spinner-container hidden">
+            <div class="spinner"></div>
+            <p>Fetching latest news...</p>
+        </div>
+
+        <!-- News Grid -->
+        <section id="newsGrid" class="news-grid"></section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="year"></span> Live News Feed. Powered by NewsAPI.</p>
+        </div>
+    </footer>
+
+    <!-- Use type="module" to enable ES6 module imports -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
