@@ -5,6 +5,9 @@ const newsGrid = document.getElementById('newsGrid');
 const loadingSpinner = document.getElementById('loadingSpinner');
 const messageContainer = document.getElementById('messageContainer');
 
+// Base64 encoded fallback SVG image to ensure offline/network-resilient loading
+const DEFAULT_PLACEHOLDER = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjI1MCIgdmlld0JveD0iMCAwIDQwMCAyNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMWUyOTNiO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzBmMTcyYTtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTcwLCA3NSkiIHN0cm9rZT0iIzQ3NTU2OSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGZpbGw9Im5vbmUiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI2MCIgaGVpZ2h0PSI0OCIgcng9IjQiLz48Y2lyY2xlIGN4PSIxOCIgY3k9IjE2IiByPSI0Ii8+PHBhdGggZD0iTTQgNDAgbDE4LTE4IDE2IDE2IDgtOCAxMCAxMCIvPjwvZz48dGV4dCB4PSI1MCUiIHk9IjE2MCIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InN5c3RlbS11aSwgLWFwcGxlLXN5c3RlbSwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjYwMCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk0YTNiOCIgbGV0dGVyLXNwYWNpbmc9IjEiPk5FV1MgRkVFRDwvdGV4dD48L3N2Zz4=';
+
 /**
  * Renders an array of articles to the DOM using a DocumentFragment
  * to minimize DOM reflows and maximize performance.
@@ -29,7 +32,7 @@ export function renderArticles(articles) {
         card.className = 'news-card';
 
         // Use a placeholder if no image is provided
-        const imageUrl = article.urlToImage || 'https://via.placeholder.com/400x200.png?text=No+Image+Available';
+        const imageUrl = article.urlToImage || DEFAULT_PLACEHOLDER;
         const sourceName = article.source?.name || 'Unknown Source';
         const publishedDate = formatDate(article.publishedAt);
         const description = article.description || 'No description available for this article.';
@@ -37,7 +40,7 @@ export function renderArticles(articles) {
         // Build inner HTML (Using template literals is efficient here since we have full control over the inputs, 
         // though in production we should sanitize HTML to prevent XSS if the API isn't fully trusted)
         card.innerHTML = `
-            <img class="news-card-img" src="${imageUrl}" alt="${article.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x200.png?text=Image+Load+Error'">
+            <img class="news-card-img" src="${imageUrl}" alt="${article.title}" loading="lazy" onerror="this.onerror=null; this.src='${DEFAULT_PLACEHOLDER}';">
             <div class="news-card-content">
                 <h2 class="news-card-title">
                     <a href="${article.url}" target="_blank" rel="noopener noreferrer">
